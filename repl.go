@@ -10,21 +10,14 @@ import (
 type cliCommand struct {
 	name        string
 	description string
-	callback    func() error
+	callback    func(*config) error
 }
 
-func commandExit() error {
-	fmt.Println("Closing the Pokedex... Goodbye!")
-	os.Exit(0)
-	return nil
+type config struct {
+	commands map[string]cliCommand
 }
 
-func printHelp() error {
-	fmt.Printf("Welcome to the Pokedex!\nUsage:\n\nhelp: Displays a help message\nexit: Exit the Pokedex\n")
-	return nil
-}
-
-func startRepl() {
+func startRepl(cfg *config) {
 	bufferScanner := bufio.NewScanner(os.Stdin)
 
 	for {
@@ -36,11 +29,11 @@ func startRepl() {
 		}
 		commandName := cleanedInput[0]
 
-		fmt.Printf("Your command was: %s\n", commandName)
+		//fmt.Printf("Your command was: %s\n", commandName)
 
-		cmd, exists := getCommands()[commandName]
+		cmd, exists := cfg.commands[commandName]
 		if exists {
-			err := cmd.callback()
+			err := cmd.callback(cfg)
 			if err != nil {
 				fmt.Println(err)
 			}
@@ -71,7 +64,17 @@ func getCommands() map[string]cliCommand {
 		"help": {
 			name:        "help",
 			description: "Prints out the list of possible commands.",
-			callback:    printHelp,
+			callback:    commandHelp,
+		},
+		"map": {
+			name:        "map",
+			description: "Displays the first and next 20 locations.",
+			callback:    commandMapF, //fix
+		},
+		"mapb": {
+			name:        "mapb",
+			description: "Displays the previous 20 locations",
+			callback:    commandMapB, //fix
 		},
 	}
 }
