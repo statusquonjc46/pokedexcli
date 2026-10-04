@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"math/rand"
 	"os"
@@ -83,6 +84,42 @@ func commandCatch(cfg *config, pokemon string) error {
 		cfg.pokemon[pokemon] = pokemonDetails
 	} else {
 		fmt.Printf("%v escaped!\n", pokemon)
+	}
+
+	return nil
+}
+
+func commandInspect(cfg *config, pokemon string) error {
+	poke, ok := cfg.pokemon[pokemon]
+	if !ok {
+		return fmt.Errorf("you have not caught %v", pokemon)
+	}
+
+	details := fmt.Sprintf(`Name: %v
+Height: %v
+Weight: %v
+Stats:`, poke.Name, poke.Height, poke.Weight)
+
+	for _, v := range poke.Stats {
+		details += fmt.Sprintf("\n  -%v: %v", v.Stat.Name, v.BaseStat)
+	}
+
+	details += "\nTypes:\n"
+	for _, v := range poke.Types {
+		details += fmt.Sprintf("  - %v\n", v.Type.Name)
+	}
+	fmt.Println(details)
+	return nil
+}
+
+func commandPokedex(cfg *config, _ string) error {
+	if len(cfg.pokemon) < 1 {
+		return errors.New("You have not caught any pokemon!")
+	}
+
+	fmt.Println("Your Pokedex:")
+	for _, v := range cfg.pokemon {
+		fmt.Printf("  - %v\n", v.Name)
 	}
 
 	return nil

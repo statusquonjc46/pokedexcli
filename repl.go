@@ -27,7 +27,7 @@ func startRepl(cfg *config) {
 	bufferScanner := bufio.NewScanner(os.Stdin)
 
 	for {
-		fmt.Println("Pokedex >")
+		fmt.Print("Pokedex > ")
 		scanBool := bufferScanner.Scan()
 		if scanBool == false {
 			fmt.Println(bufferScanner.Err())
@@ -44,6 +44,8 @@ func startRepl(cfg *config) {
 		case "explore":
 			argTwo = cleanedInput[1]
 		case "catch":
+			argTwo = cleanedInput[1]
+		case "inspect":
 			argTwo = cleanedInput[1]
 		default:
 			argTwo = ""
@@ -108,6 +110,16 @@ func getCommands() map[string]cliCommand {
 			name:        "catch",
 			description: "Attempt to catch the named pokemon.",
 			callback:    commandCatch,
+		},
+		"inspect": {
+			name:        "inspect",
+			description: "Print a caught pokemon's stats.",
+			callback:    commandInspect,
+		},
+		"pokedex": {
+			name:        "pokedex",
+			description: "Print out the name for all pokemon caught.",
+			callback:    commandPokedex,
 		},
 	}
 }
