@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"os"
 	"strings"
+
+	"github.com/statusquonjc46/pokedexcli/internal/pokeapi"
 )
 
 type cliCommand struct {
@@ -14,7 +16,10 @@ type cliCommand struct {
 }
 
 type config struct {
-	commands map[string]cliCommand
+	commands      map[string]cliCommand
+	pokeApiClient pokeapi.Client
+	nextLocation  *string
+	prevLocation  *string
 }
 
 func startRepl(cfg *config) {
@@ -49,9 +54,12 @@ func cleanInput(text string) []string {
 	if len(text) == 0 {
 		return []string{}
 	}
-	splitText := strings.Split(strings.Join(strings.Fields(strings.ToLower(text)), " "), " ")
+	//splitText := strings.Split(strings.Join(strings.Fields(strings.ToLower(text)), " "), " ")
 	//splitText := strings.Fields(strings.ToLower(text))
-	return splitText
+	output := strings.ToLower(text)
+	words := strings.Fields(output)
+	return words
+	//return splitText
 }
 
 func getCommands() map[string]cliCommand {

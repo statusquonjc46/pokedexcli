@@ -20,9 +20,33 @@ func commandHelp(cfg *config) error {
 }
 
 func commandMapF(cfg *config) error {
+	locations, err := cfg.pokeApiClient.GetLocationAreas(cfg.nextLocation)
+	if err != nil {
+		return err
+	}
+
+	cfg.nextLocation = locations.Next
+	cfg.prevLocation = locations.Previous
+
+	for _, loc := range locations.Results {
+		fmt.Println(loc.Name)
+	}
+
 	return nil
 }
 
 func commandMapB(cfg *config) error {
+	locations, err := cfg.pokeApiClient.GetLocationAreas(cfg.prevLocation)
+	if err != nil {
+		return err
+	}
+
+	cfg.nextLocation = locations.Next
+	cfg.prevLocation = locations.Previous
+
+	for _, loc := range locations.Results {
+		fmt.Println(loc.Name)
+	}
+
 	return nil
 }
