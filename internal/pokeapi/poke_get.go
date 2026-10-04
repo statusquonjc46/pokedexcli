@@ -2,6 +2,7 @@ package pokeapi
 
 import (
 	"encoding/json"
+	"errors"
 	"io"
 	"net/http"
 )
@@ -44,4 +45,44 @@ func (c *Client) GetLocationAreas(pageURL *string) (RespLocations, error) {
 
 	c.cache.Add(url, data)
 	return locationData, nil
+}
+
+func (c *Client) GetPokemonInArea(area string) (AreaData, error) {
+	if area == "" {
+		return AreaData{}, errors.New("No Area Provided.")
+	}
+	url := baseURL + "/location-area/" + area
+
+	if val, ok := c.cache.Get(url); ok {
+		areaData := AreaData{}
+		err := json.Unmarshal(val, &areaData)
+		if err != nil {
+			return AreaData{}, err
+		}
+		return areaData, nil
+	}
+
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return AreaData{}, err
+	}
+
+	resp, err := c.httpClient.Do(req)
+	if err != nil {
+		return AreaData{}, err
+	}
+
+	data, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return AreaData{}, err
+	}
+
+	areaData := AreaData{}
+	err = json.Unmarshal(data, &areaData)
+	if err != nil {
+		return AreaData{}, err
+	}
+
+	c.cache.Add(url, data)
+	return areaData, nil
 }

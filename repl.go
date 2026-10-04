@@ -12,7 +12,7 @@ import (
 type cliCommand struct {
 	name        string
 	description string
-	callback    func(*config) error
+	callback    func(*config, string) error
 }
 
 type config struct {
@@ -20,6 +20,7 @@ type config struct {
 	pokeApiClient pokeapi.Client
 	nextLocation  *string
 	prevLocation  *string
+	//pokemonEncounter []struct{}{}
 }
 
 func startRepl(cfg *config) {
@@ -29,16 +30,19 @@ func startRepl(cfg *config) {
 		fmt.Println("Pokedex >")
 		bufferScanner.Scan()
 		cleanedInput := cleanInput(bufferScanner.Text())
+		areaName := ""
 		if len(cleanedInput) == 0 {
 			continue
 		}
 		commandName := cleanedInput[0]
-
+		if commandName == "explore" {
+			areaName = cleanedInput[1]
+		}
 		//fmt.Printf("Your command was: %s\n", commandName)
 
 		cmd, exists := cfg.commands[commandName]
 		if exists {
-			err := cmd.callback(cfg)
+			err := cmd.callback(cfg, areaName)
 			if err != nil {
 				fmt.Println(err)
 			}
@@ -77,12 +81,17 @@ func getCommands() map[string]cliCommand {
 		"map": {
 			name:        "map",
 			description: "Displays the first and next 20 locations.",
-			callback:    commandMapF, //fix
+			callback:    commandMapF,
 		},
 		"mapb": {
 			name:        "mapb",
 			description: "Displays the previous 20 locations",
-			callback:    commandMapB, //fix
+			callback:    commandMapB,
+		},
+		"explore": {
+			name:        "explore",
+			description: "Print all pokemon in the chosen area.",
+			callback:    commandExplore,
 		},
 	}
 }

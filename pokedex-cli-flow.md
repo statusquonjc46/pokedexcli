@@ -1,0 +1,32 @@
+- flow
+- main.go -> 
+  - startrepl() ->
+    - repl.go ->
+      - takes commands from cli ->
+        - cleans the input and executes the commands ->
+          - commands.go:
+            - commandHelp() ->
+              - prints all commands
+              - back to repl.go
+            - commandExit() ->
+              - safely exits pokedex
+              - back to repl.go
+              - closes program
+            - commandMapF() ->
+              - calls pokeapiclient.getlocationareas() ->
+                - poke_get.go:
+                  - checks if cache is current using poke_cache.go
+                    - if: use cache not http.Get
+                    - if not: performs http.Get request to pokeapi endpoint to get 20 locations forward
+                      - set cache
+                  - prints the returned areas
+                  - go back to repl.go
+            - commandMapB() ->
+              - calls pokeapiclient.getlocationareas() ->
+                - poke_get.go:
+                  - checks if cache is current using poke_cache.go
+                    - if: use cache not http.Get
+                    - if not: performs http.Get request to pokeapi endpoint to get previous 20 locations
+                      - set cache
+                  - prints them
+                  - go back to repl.go
