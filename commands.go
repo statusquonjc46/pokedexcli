@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math/rand"
 	"os"
 )
 
@@ -61,6 +62,27 @@ func commandExplore(cfg *config, area string) error {
 	for _, p := range areaData.PokemonEncounters {
 		currPokemon := p.Pokemon.Name
 		fmt.Printf(" - %v\n", currPokemon)
+	}
+
+	return nil
+}
+
+func commandCatch(cfg *config, pokemon string) error {
+	fmt.Printf("Throwing a Pokeball at %v...\n", pokemon)
+	//const maxBaseExp int = 650
+	pokemonDetails, err := cfg.pokeApiClient.GetPokemon(pokemon)
+	if err != nil {
+		return err
+	}
+
+	//fmt.Println("DEBUG base experience:", pokemonDetails)
+	randomChance := rand.Intn(pokemonDetails.BaseExperience)
+
+	if randomChance < 40 {
+		fmt.Printf("%v was caught!\n", pokemon)
+		cfg.pokemon[pokemon] = pokemonDetails
+	} else {
+		fmt.Printf("%v escaped!\n", pokemon)
 	}
 
 	return nil

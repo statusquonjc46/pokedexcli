@@ -20,7 +20,7 @@ type config struct {
 	pokeApiClient pokeapi.Client
 	nextLocation  *string
 	prevLocation  *string
-	//pokemonEncounter []struct{}{}
+	pokemon       map[string]pokeapi.Pokemon
 }
 
 func startRepl(cfg *config) {
@@ -28,21 +28,32 @@ func startRepl(cfg *config) {
 
 	for {
 		fmt.Println("Pokedex >")
-		bufferScanner.Scan()
+		scanBool := bufferScanner.Scan()
+		if scanBool == false {
+			fmt.Println(bufferScanner.Err())
+		}
 		cleanedInput := cleanInput(bufferScanner.Text())
-		areaName := ""
+		argTwo := ""
+
 		if len(cleanedInput) == 0 {
 			continue
 		}
 		commandName := cleanedInput[0]
-		if commandName == "explore" {
-			areaName = cleanedInput[1]
+
+		switch commandName {
+		case "explore":
+			argTwo = cleanedInput[1]
+		case "catch":
+			argTwo = cleanedInput[1]
+		default:
+			argTwo = ""
 		}
+
 		//fmt.Printf("Your command was: %s\n", commandName)
 
 		cmd, exists := cfg.commands[commandName]
 		if exists {
-			err := cmd.callback(cfg, areaName)
+			err := cmd.callback(cfg, argTwo)
 			if err != nil {
 				fmt.Println(err)
 			}
@@ -92,6 +103,11 @@ func getCommands() map[string]cliCommand {
 			name:        "explore",
 			description: "Print all pokemon in the chosen area.",
 			callback:    commandExplore,
+		},
+		"catch": {
+			name:        "catch",
+			description: "Attempt to catch the named pokemon.",
+			callback:    commandCatch,
 		},
 	}
 }

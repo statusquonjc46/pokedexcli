@@ -38,4 +38,12 @@
                   - set cache
                 - print pokemon in selected area
                 - go back to repl.go
+          - commandCatch() ->
+            - calls pokeapiclient.getpokemon() ->
+              - checks if cache is current using poke_cache.go
+              - if: user cache not http.get
+              - if not" performs http.get request to pokeapi endpoint to get pokemon in area data
+                - set cache
+              - roll random number based on base experience of pokemon to try to catch it
+                - add to config struct if caught as a map k,v string,Pokemon
           -
