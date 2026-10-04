@@ -1,9 +1,9 @@
 - flow
-- main.go -> 
+- main.go:
   - startrepl() ->
-    - repl.go ->
-      - takes commands from cli ->
-        - cleans the input and executes the commands ->
+    - repl.go:
+      - takes commands from cli:
+        - cleans the input and executes the commands:
           - commands.go:
             - commandHelp() ->
               - prints all commands
@@ -30,3 +30,12 @@
                       - set cache
                   - prints them
                   - go back to repl.go
+            - commandExplore() ->
+              - calls pokeapiclient.getpokemoninarea() ->
+                - checks if cache is current using poke_cache.go
+                - if: user cache not http.get
+                - if not" performs http.get request to pokeapi endpoint to get pokemon in area data
+                  - set cache
+                - print pokemon in selected area
+                - go back to repl.go
+          -
